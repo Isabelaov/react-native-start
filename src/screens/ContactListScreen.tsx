@@ -1,4 +1,4 @@
-import { View, Text, Alert, FlatList, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Text, Alert, FlatList, TouchableOpacity, StyleSheet, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
@@ -30,7 +30,6 @@ export const ContactListScreen = () => {
   const navigation = useNavigation<ContactListNavigationProp>()
   const route = useRoute<ContactListRouteProp>()
   
-
   const [contacts, setContacts] = useState<Contact[]>([])
 
   useEffect(() => {
@@ -99,18 +98,34 @@ export const ContactListScreen = () => {
 
   const render = ({ item }: { item: Contact }) => (
     <View style={ styles.contact }>
+
+      <View>
+      {item.picture ? (
+          <Image source={{ uri: item.picture }} style={styles.picture} />
+        ) : (
+          <View style={styles.placeholder}>
+            <Text style={styles.placeholderText}>{item.name ? item.name[0] : "?"}</Text>
+          </View>
+        )}
+      </View>
+
+      <View>
       <Text style={ styles.text }>{ item.name }</Text>
       <Text style={ styles.text }> { item.phone } </Text>
+      </View>
 
+      <View style={ styles.buttonsContainer }>
       <TouchableOpacity style={ styles.itemButton }>
         <Text style={ styles.buttonText } 
-        onPress={ () => navigation.navigate('ContactToHandle', {id: item.id, contact: item}) }
+        onPress={ () => navigation.navigate('ContactToHandle', { id: item.id, contact: item }) }
         >Edit</Text>
       </TouchableOpacity>
       
       <TouchableOpacity style={ styles.itemButton } onPress={ () => deleteContact(item.id) }>
         <Text style={ styles.buttonText }>Delete</Text>
       </TouchableOpacity>
+      </View>
+
     </View>
     )
 
@@ -143,15 +158,16 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center'
   },
-
   container: {
-    padding: 20
+    padding: 20,
+    flex: 1
   },
   contact: {
     display: 'flex',
     flexDirection: 'row',
     margin: 10,
     padding: 10,
+    justifyContent: 'space-between'
   },
   text: {
     color: 'black',
@@ -168,5 +184,27 @@ const styles = StyleSheet.create({
   itemButtonText: {
     margin: 5,
     fontSize: 5
-  }
+  },
+  buttonsContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center'
+  },
+  picture: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+  },
+  placeholder: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: '#ccc',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  placeholderText: {
+    fontSize: 30,
+    fontWeight: 'bold',
+  },
 })

@@ -97,7 +97,7 @@ export const ContactListScreen = () => {
   }
 
   const render = ({ item }: { item: Contact }) => (
-    <View style={ styles.contact }>
+    <TouchableOpacity style={ styles.contact }>
 
       <View>
       {item.picture ? (
@@ -126,7 +126,7 @@ export const ContactListScreen = () => {
       </TouchableOpacity>
       </View>
 
-    </View>
+    </TouchableOpacity>
     )
 
   return (

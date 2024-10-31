@@ -4,4 +4,5 @@ export interface Contact {
   phone: string;
   email?: string;
   picture?: string;
+  tag?: 'client' | 'employee';
 }

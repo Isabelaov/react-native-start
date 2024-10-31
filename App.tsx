@@ -12,6 +12,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {ContactListScreen} from './src/screens/ContactListScreen';
 import {CreateUpdateContactScreen} from './src/screens/CreateUpdateContactScreen';
 import { RootStackParams } from './src/interfaces';
+import { ContactScreen } from './src/screens/ContactScreen';
 
 const Stack = createNativeStackNavigator<RootStackParams>()
 
@@ -27,9 +28,16 @@ function App(): React.JSX.Element {
 
         <Stack.Screen
           name="ContactToHandle"
-          component={CreateUpdateContactScreen}
-          options={{title: 'Create or Edit Contact'}}
+          component={ CreateUpdateContactScreen }
+          options={ { title: 'Create or Edit Contact' } }
         />
+
+        <Stack.Screen 
+        name="ContactView"
+        component={ ContactScreen }
+        options={ { title: 'Contact Details' } }
+        />
+        
       </Stack.Navigator>
     </NavigationContainer>
   );

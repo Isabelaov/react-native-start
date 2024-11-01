@@ -1,5 +1,4 @@
-import { View, Text } from 'react-native'
-import React, { useState } from 'react'
+import  { useState } from 'react'
 import { requestCameraPermission, requestGalleryPermission } from '../utils/permissions'
 import { ImagePickerResponse, launchCamera, launchImageLibrary } from 'react-native-image-picker'
 

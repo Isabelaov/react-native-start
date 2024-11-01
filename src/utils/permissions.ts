@@ -80,3 +80,11 @@ export const requestGalleryPermission = async () => {
 
   return handlePermissionResult(result, 'Gallery');
 };
+
+export const requestLocationPermission = async () => {
+  const result = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
+
+  if (result === RESULTS.GRANTED) {
+    return handlePermissionResult(result, 'Location');
+  }
+};

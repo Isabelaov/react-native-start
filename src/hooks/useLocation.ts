@@ -1,7 +1,6 @@
 import {useEffect, useState} from 'react';
 import Geolocation from '@react-native-community/geolocation';
 import {Alert} from 'react-native';
-import {requestLocationAccuracy} from 'react-native-permissions';
 import {requestLocationPermission} from '../utils/permissions';
 
 export const useLocation = () => {
@@ -37,5 +36,9 @@ export const useLocation = () => {
     })();
   }, []);
 
-  return location;
+  const pickLocation = (lat: number, long: number) => {
+    setLocation({latitude: lat, longitude: long});
+  };
+
+  return {location, pickLocation};
 };

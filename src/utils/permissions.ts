@@ -42,8 +42,6 @@ const checkRequestPermissions = async (
 };
 
 const handlePermissionResult = (result: PermissionStatus, type: string) => {
-  console.log({result, type});
-
   if (result === RESULTS.GRANTED) {
     Alert.alert(`${type} permission granted`);
     return true;

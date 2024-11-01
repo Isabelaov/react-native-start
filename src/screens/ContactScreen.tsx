@@ -7,22 +7,23 @@ import useContacts from '../hooks/useContacts';
 type Props = NativeStackScreenProps<RootStackParams, 'ContactView'>;
 
 export const ContactScreen =  ({ route, navigation }: Props) => {
-    const {deleteContact} = useContacts()
-    const { contact } = route.params
+    const { deleteContact } = useContacts()
+    const { contact } = route.params    
 
   return (
     <View>
         <View>
-      {contact.picture ? (
+      { contact.picture ? (
           <Image source={ { uri: contact.picture } } style={ styles.picture } />
         ) : (
           <View style={ styles.placeholder }>
             <Text style={ styles.placeholderText }>{ contact.name[0] }</Text>
           </View>
-        )}
-        <Text style={styles.name}>{contact.name}</Text>
-      <Text style={styles.text}>📞 {contact.phone}</Text>
-      <Text style={styles.text}>✉️ {contact.email || 'no email'}</Text>
+        ) }
+        <Text style={styles.name}>{ contact.name }</Text>
+      <Text style={styles.text}>📞 { contact.phone }</Text>
+      <Text style={styles.text}>✉️ { contact.email || 'no email' }</Text>
+      <Text style={ styles.text }>Tag: { contact.tag || 'no tag' }</Text>
       </View>
 
 

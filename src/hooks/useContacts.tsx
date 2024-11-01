@@ -44,14 +44,16 @@ export default function useContacts(route?: any) {
         }
     }
 
-    const createUpdate = (contact: Contact) => {
-        setContacts((prev) => {
+    const createUpdate = async (contact: Contact) => {
+        setContacts((prev: Contact[]) => {
             const contactExists = prev.some((c) => c.id === contact.id)
+            
             const updated = contactExists 
             ? prev.map((c) => c.id === contact.id ? contact : c) 
             : [...prev, contact]
     
-            save(updated)
+            save(updated);
+            
             return updated
           })
     }

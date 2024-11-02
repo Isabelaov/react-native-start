@@ -11,12 +11,15 @@ import {
 
 const CAMERA_PERMISSIONS_KEY = 'camera';
 const GALLERY_PERMISSIONS_KEY = 'gallery';
+const LOCATION_PERMISSIONS_KEY = 'location';
 
 const checkRequestPermissions = async (
   permission: Permission,
   storageKey: string,
 ): Promise<PermissionStatus> => {
   const storedPermission = await AsyncStorage.getItem(storageKey);
+
+  console.log('uwu');
 
   console.log({storedPermission, storageKey});
 
@@ -79,12 +82,4 @@ export const requestGalleryPermission = async () => {
   );
 
   return handlePermissionResult(result, 'Gallery');
-};
-
-export const requestLocationPermission = async () => {
-  const result = await request(PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION);
-
-  if (result === RESULTS.GRANTED) {
-    return handlePermissionResult(result, 'Location');
-  }
 };

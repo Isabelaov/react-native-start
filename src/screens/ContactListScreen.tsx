@@ -30,9 +30,13 @@ export const ContactListScreen = () => {
       </View>
 
       <View>
-      <Text style={ styles.text }>{ item.name }</Text>
-      <Text style={ styles.text }>{ item.phone }</Text>
-      <Text style={ styles.text }>{ item.email || 'no email :3' }</Text>
+        <Text style={ styles.text }>{ item.name }</Text>
+        <Text style={ styles.text }>{ item.phone }</Text>
+        <Text style={ styles.text }>{ item.email || 'no email :3' }</Text>
+      </View>
+
+      <View style={ styles.tag }>
+        <Text style={ styles.tagText }>{ item.tag ? item.tag : 'no tag'}</Text>
       </View>
 
     </TouchableOpacity>
@@ -75,6 +79,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     margin: 10,
     padding: 10
   },
@@ -102,4 +107,17 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
   },
+  tag: {
+    backgroundColor: 'green',
+    padding: 5,
+    display: 'flex',
+    alignItems: 'center',
+    borderRadius: 20,
+    width: 80,
+    textAlign: 'center',
+  },
+  tagText: {
+    color: '#fff',
+    fontSize: 15,
+  }
 })

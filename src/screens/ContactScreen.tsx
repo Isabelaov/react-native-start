@@ -1,18 +1,21 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions, ScrollView } from 'react-native'
 import React from 'react'
 import { RootStackParams } from '../interfaces';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import useContacts from '../hooks/useContacts';
+import MapView, { Marker } from 'react-native-maps';
 
 type Props = NativeStackScreenProps<RootStackParams, 'ContactView'>;
+const { height } = Dimensions.get('window');
 
 export const ContactScreen =  ({ route, navigation }: Props) => {
     const { deleteContact } = useContacts()
     const { contact } = route.params    
 
   return (
-    <View style={ styles.container }>
-        <View>
+    <ScrollView>
+      <View style={ styles.container }>
+      <View>
           { contact.picture ? (
               <Image source={ { uri: contact.picture } } style={ styles.picture } />
             ) : (
@@ -26,7 +29,22 @@ export const ContactScreen =  ({ route, navigation }: Props) => {
         <Text style={styles.name}>{ contact.name }</Text>
         <Text style={styles.text}>📞 { contact.phone }</Text>
         <Text style={styles.text}>✉️ { contact.email || 'no email' }</Text>
-        <Text style={ styles.text }>Tag: { contact.tag || 'no tag' }</Text>
+        <Text style={ styles.text }>{ contact.tag || 'no tag' }</Text>
+
+        {contact.location && (
+        <MapView
+          style={styles.map}
+          initialRegion={{
+            latitude: contact.location.latitude,
+            longitude: contact.location.longitude,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+          }}
+          liteMode
+        >
+          <Marker coordinate={contact.location} />
+        </MapView>
+      )}
 
     <View style={ styles.buttonsContainer }>
       <TouchableOpacity style={ styles.itemButton }>
@@ -39,7 +57,10 @@ export const ContactScreen =  ({ route, navigation }: Props) => {
         <Text style={ styles.buttonText }>Delete</Text>
       </TouchableOpacity>
       </View>
-    </View>
+
+      </View>
+        
+    </ScrollView>
   )
 }
 
@@ -50,6 +71,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    flexGrow: 1
   },
   itemButton: {
     borderRadius: 10,
@@ -103,5 +125,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: 'black',
     margin: 10
-  }
+  },
+  map: { 
+    height: height * 0.5,
+    width: 300,
+    margin: 10,
+    
+  },
 })

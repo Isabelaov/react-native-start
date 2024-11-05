@@ -118,8 +118,8 @@ export const CreateUpdateContactScreen: React.FC<Props> = ({ route, navigation }
             provider={ PROVIDER_GOOGLE }
             initialRegion={
               {
-                latitude: location?.latitude || 30.0,
-                longitude: location?.longitude || -120.0,
+                latitude: location?.latitude || 6.2442,
+                longitude: location?.longitude || -75.5812,
                 latitudeDelta: 0.01,
                 longitudeDelta: 0.01
               }

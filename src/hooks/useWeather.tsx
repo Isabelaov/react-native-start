@@ -4,8 +4,6 @@ import { WEATHER_API_KEY } from '@env';
 import { WeatherData } from "../interfaces"
 
 export const useWeather = (lat?: number, lon?: number) => {
-    console.log({lat, lon});
-    
     const [weather, setWeather] = useState<WeatherData | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)

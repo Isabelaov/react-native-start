@@ -1,10 +1,10 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions, ScrollView, ActivityIndicator } from 'react-native'
 import React from 'react'
-import { RootStackParams } from '../interfaces';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import useContacts from '../hooks/useContacts';
 import MapView, { Marker } from 'react-native-maps';
+import { RootStackParams } from '../interfaces';
 import { useWeather } from '../hooks/useWeather';
+import useContacts from '../hooks/useContacts';
 
 type Props = NativeStackScreenProps<RootStackParams, 'ContactView'>;
 const { height } = Dimensions.get('window');
@@ -34,19 +34,42 @@ export const ContactScreen =  ({ route, navigation }: Props) => {
           <Text style={ styles.text }>{ contact.tag || 'no tag' }</Text>
 
           {contact.location && (
-          <MapView
-            style={styles.map}
-            initialRegion={{
-              latitude: contact.location.latitude,
-              longitude: contact.location.longitude,
-              latitudeDelta: 0.01,
-              longitudeDelta: 0.01,
-            }}
-            liteMode
-          >
-            <Marker coordinate={contact.location} />
-          </MapView>
-        )}
+            <View>
+              <View>
+                {loading ? (
+                  <View>
+                    <ActivityIndicator size="large" color="#0000ff" />
+                    <Text>Loading weather...</Text>
+                  </View>
+                ) : error ? (
+                  <Text style={styles.error}>{error}</Text>
+                ) : 
+                weather ? (
+                  <View style={styles.weatherContainer}>
+                    <Text style={styles.weatherText}>{weather.main.humidity}%</Text>
+                    <Text style={styles.weatherText}>{weather.main.temp}°C</Text>
+                    <Text style={styles.weatherText}>{weather.weather[0].description}</Text>
+                  </View>
+                ) : (
+                  <Text>No weather data available.</Text>
+                )}
+              </View>
+
+              <MapView
+                style={styles.map}
+                initialRegion={{
+                  latitude: contact.location.latitude,
+                  longitude: contact.location.longitude,
+                  latitudeDelta: 0.01,
+                  longitudeDelta: 0.01,
+                }}
+                liteMode
+              >
+                <Marker coordinate={contact.location} />
+              </MapView>
+            </View>
+          )
+        }
 
       <View style={ styles.buttonsContainer }>
         <TouchableOpacity style={ styles.itemButton }>
@@ -59,31 +82,6 @@ export const ContactScreen =  ({ route, navigation }: Props) => {
           <Text style={ styles.buttonText }>Delete</Text>
         </TouchableOpacity>
         </View>
-
-        <View>
-          {loading ? (
-            <View>
-              <ActivityIndicator size="large" color="#0000ff" />
-              <Text>Loading...</Text>
-            </View>
-          ) : error ? (
-            <Text style={styles.error}>{error}</Text>
-          ) : 
-          contact.location === null ?
-          <Text>No weather data available.</Text>
-          : 
-          weather ? (
-            <View style={styles.weatherContainer}>
-              <Text>UwU</Text>
-              <Text style={styles.weatherText}>{weather.main.humidity}%</Text>
-              <Text style={styles.weatherText}>{weather.main.temp}°C</Text>
-              <Text style={styles.weatherText}>{weather.weather[0].description}</Text>
-            </View>
-          ) : (
-            <Text>No weather data available.</Text>
-          )}
-        </View>
-
       </View>
         
     </ScrollView>
@@ -161,16 +159,16 @@ const styles = StyleSheet.create({
     color: 'red',
   },
   weatherContainer: {
-    marginTop: 15,
+    margin: 15,
+    marginTop: 0,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 15,
     padding: 20,
-    borderRadius: 10,
-    borderColor: 'black'
   },
   weatherText: {
     fontSize: 16,
     paddingLeft: 0,
+    color: '#2b55c7'
   },
 })

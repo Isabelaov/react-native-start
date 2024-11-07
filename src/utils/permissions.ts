@@ -11,12 +11,15 @@ import {
 
 const CAMERA_PERMISSIONS_KEY = 'camera';
 const GALLERY_PERMISSIONS_KEY = 'gallery';
+const LOCATION_PERMISSIONS_KEY = 'location';
 
 const checkRequestPermissions = async (
   permission: Permission,
   storageKey: string,
 ): Promise<PermissionStatus> => {
   const storedPermission = await AsyncStorage.getItem(storageKey);
+
+  console.log('uwu');
 
   console.log({storedPermission, storageKey});
 
@@ -42,8 +45,6 @@ const checkRequestPermissions = async (
 };
 
 const handlePermissionResult = (result: PermissionStatus, type: string) => {
-  console.log({result, type});
-
   if (result === RESULTS.GRANTED) {
     Alert.alert(`${type} permission granted`);
     return true;

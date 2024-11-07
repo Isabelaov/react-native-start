@@ -5,5 +5,5 @@ export interface Contact {
   email?: string;
   picture?: string;
   tag?: string;
-  location?: {latitude: number; longitude: number} | null;
+  location?: {latitude: number; longitude: number} | null | undefined;
 }

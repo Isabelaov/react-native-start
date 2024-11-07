@@ -1,63 +1,87 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions, ScrollView } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions, ScrollView, ActivityIndicator } from 'react-native'
 import React from 'react'
-import { RootStackParams } from '../interfaces';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import useContacts from '../hooks/useContacts';
 import MapView, { Marker } from 'react-native-maps';
+import { RootStackParams } from '../interfaces';
+import { useWeather } from '../hooks/useWeather';
+import useContacts from '../hooks/useContacts';
 
 type Props = NativeStackScreenProps<RootStackParams, 'ContactView'>;
 const { height } = Dimensions.get('window');
 
 export const ContactScreen =  ({ route, navigation }: Props) => {
     const { deleteContact } = useContacts()
-    const { contact } = route.params    
+    const { contact } = route.params
+    let { weather, loading, error } = useWeather(contact.location?.latitude, contact.location?.longitude);
 
   return (
     <ScrollView>
       <View style={ styles.container }>
-      <View>
-          { contact.picture ? (
-              <Image source={ { uri: contact.picture } } style={ styles.picture } />
-            ) : (
-              <View style={ styles.placeholder }>
-                <Text style={ styles.placeholderText }>{ contact.name[0] }</Text>
+        <View>
+            { contact.picture ? (
+                <Image source={ { uri: contact.picture } } style={ styles.picture } />
+              ) : (
+                <View style={ styles.placeholder }>
+                  <Text style={ styles.placeholderText }>{ contact.name[0] }</Text>
+                </View>
+              ) 
+            }
+        </View>
+
+          <Text style={styles.name}>{ contact.name }</Text>
+          <Text style={styles.text}>📞 { contact.phone }</Text>
+          <Text style={styles.text}>✉️ { contact.email || 'no email' }</Text>
+          <Text style={ styles.text }>{ contact.tag || 'no tag' }</Text>
+
+          {contact.location && (
+            <View>
+              <View>
+                {loading ? (
+                  <View>
+                    <ActivityIndicator size="large" color="#0000ff" />
+                    <Text>Loading weather...</Text>
+                  </View>
+                ) : error ? (
+                  <Text style={styles.error}>{error}</Text>
+                ) : 
+                weather ? (
+                  <View style={styles.weatherContainer}>
+                    <Text style={styles.weatherText}>{weather.main.humidity}%</Text>
+                    <Text style={styles.weatherText}>{weather.main.temp}°C</Text>
+                    <Text style={styles.weatherText}>{weather.weather[0].description}</Text>
+                  </View>
+                ) : (
+                  <Text>No weather data available.</Text>
+                )}
               </View>
-            ) 
-          }
-      </View>
 
-        <Text style={styles.name}>{ contact.name }</Text>
-        <Text style={styles.text}>📞 { contact.phone }</Text>
-        <Text style={styles.text}>✉️ { contact.email || 'no email' }</Text>
-        <Text style={ styles.text }>{ contact.tag || 'no tag' }</Text>
+              <MapView
+                style={styles.map}
+                initialRegion={{
+                  latitude: contact.location.latitude,
+                  longitude: contact.location.longitude,
+                  latitudeDelta: 0.01,
+                  longitudeDelta: 0.01,
+                }}
+                liteMode
+              >
+                <Marker coordinate={contact.location} />
+              </MapView>
+            </View>
+          )
+        }
 
-        {contact.location && (
-        <MapView
-          style={styles.map}
-          initialRegion={{
-            latitude: contact.location.latitude,
-            longitude: contact.location.longitude,
-            latitudeDelta: 0.01,
-            longitudeDelta: 0.01,
-          }}
-          liteMode
-        >
-          <Marker coordinate={contact.location} />
-        </MapView>
-      )}
-
-    <View style={ styles.buttonsContainer }>
-      <TouchableOpacity style={ styles.itemButton }>
-        <Text style={ styles.buttonText } 
-        onPress={ () => navigation.navigate('ContactToHandle', { id: contact.id, contact: contact }) }
-        >Edit</Text>
-      </TouchableOpacity>
-      
-      <TouchableOpacity style={ styles.itemButton } onPress={ () => deleteContact(contact.id) }>
-        <Text style={ styles.buttonText }>Delete</Text>
-      </TouchableOpacity>
-      </View>
-
+      <View style={ styles.buttonsContainer }>
+        <TouchableOpacity style={ styles.itemButton }>
+          <Text style={ styles.buttonText } 
+          onPress={ () => navigation.navigate('ContactToHandle', { id: contact.id, contact: contact }) }
+          >Edit</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity style={ styles.itemButton } onPress={ () => deleteContact(contact.id) }>
+          <Text style={ styles.buttonText }>Delete</Text>
+        </TouchableOpacity>
+        </View>
       </View>
         
     </ScrollView>
@@ -130,6 +154,21 @@ const styles = StyleSheet.create({
     height: height * 0.5,
     width: 300,
     margin: 10,
-    
+  },
+  error: {
+    color: 'red',
+  },
+  weatherContainer: {
+    margin: 15,
+    marginTop: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 15,
+    padding: 20,
+  },
+  weatherText: {
+    fontSize: 16,
+    paddingLeft: 0,
+    color: '#2b55c7'
   },
 })

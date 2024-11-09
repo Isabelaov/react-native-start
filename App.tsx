@@ -29,13 +29,13 @@ function App(): React.JSX.Element {
         <Stack.Screen
           name="ContactToHandle"
           component={ CreateUpdateContactScreen }
-          options={ { title: 'Create or Edit Contact' } }
+          options={ { title: 'Create or Edit Contact', headerTitleAlign: 'center' } }
         />
 
         <Stack.Screen 
         name="ContactView"
         component={ ContactScreen }
-        options={ { title: 'Contact Details' } }
+        options={ { title: 'Contact Details', headerTitleAlign: 'center' } }
         />
         
       </Stack.Navigator>

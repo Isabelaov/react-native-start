@@ -2,6 +2,10 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions, ScrollView
 import React from 'react'
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import MapView, { Marker } from 'react-native-maps';
+import AntDesignIcon from "react-native-vector-icons/AntDesign";
+import EntypoIcon from 'react-native-vector-icons/Entypo';
+import FontAwesome6 from 'react-native-vector-icons/FontAwesome6'
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
 import { RootStackParams } from '../interfaces';
 import { useWeather } from '../hooks/useWeather';
 import useContacts from '../hooks/useContacts';
@@ -17,7 +21,7 @@ export const ContactScreen =  ({ route, navigation }: Props) => {
   return (
     <ScrollView>
       <View style={ styles.container }>
-        <View>
+        <View style={ styles.pictureContainer }>
             { contact.picture ? (
                 <Image source={ { uri: contact.picture } } style={ styles.picture } />
               ) : (
@@ -28,10 +32,25 @@ export const ContactScreen =  ({ route, navigation }: Props) => {
             }
         </View>
 
+        <View>
           <Text style={styles.name}>{ contact.name }</Text>
-          <Text style={styles.text}>📞 { contact.phone }</Text>
-          <Text style={styles.text}>✉️ { contact.email || 'no email' }</Text>
-          <Text style={ styles.text }>{ contact.tag || 'no tag' }</Text>
+
+          <View style={ styles.buttonsContainer }>
+            <AntDesignIcon name='phone' size={ 25 } color='#38bb54'/>
+            <Text style={styles.text}>{ contact.phone }</Text>
+          </View>
+
+          <View style={ styles.buttonsContainer }>
+            <AntDesignIcon name='mail' size={ 25 } color='#38bb54'/>
+            <Text style={styles.text}> { contact.email || 'no email' }</Text>
+          </View>
+
+          <View style={ styles.buttonsContainer }>
+            <AntDesignIcon name='tag' size={ 25 } color='#38bb54'/>
+            <Text style={ styles.text }>{ contact.tag || 'no tag' }</Text>
+          </View>
+          
+        </View>
 
           {contact.location && (
             <View>
@@ -46,9 +65,20 @@ export const ContactScreen =  ({ route, navigation }: Props) => {
                 ) : 
                 weather ? (
                   <View style={styles.weatherContainer}>
-                    <Text style={styles.weatherText}>{weather.main.humidity}%</Text>
-                    <Text style={styles.weatherText}>{weather.main.temp}°C</Text>
-                    <Text style={styles.weatherText}>{weather.weather[0].description}</Text>
+                    <View style={ styles.weatherSubContainer }>
+                      <EntypoIcon name='water' size={ 25 } color='#38bb54'/>
+                      <Text style={styles.weatherText}>{weather.main.humidity}%</Text>
+                    </View>
+
+                    <View style={ styles.weatherSubContainer }>
+                      <FontAwesome6 name='temperature-half' size={ 25 } color='#38bb54'/>
+                      <Text style={styles.weatherText}>{weather.main.temp}°C</Text>
+                    </View>
+
+                    <View style={ styles.weatherSubContainer }>
+                      <FontAwesome5 name='cloud' size={ 25 } color='#38bb54'/>
+                      <Text style={styles.weatherText}>{weather.weather[0].description}</Text>
+                    </View>
                   </View>
                 ) : (
                   <Text>No weather data available.</Text>
@@ -119,41 +149,57 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center'
   },
+  pictureContainer: {
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 12,
+    elevation: 5,
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    margin: 15,
+    marginBottom: 25
+  },
   picture: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginRight: 10
+    width: 150,
+    height: 150,
+    borderRadius: 75,
   },
   placeholder: {
     width: 150,
     height: 150,
     borderRadius: 75,
-    backgroundColor: '#ccc',
+    backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 10
+    textAlign: 'center',
   },
   placeholderText: {
     fontSize: 100,
     fontWeight: 'bold',
+    color: 'green',
+    textAlignVertical: 'center'
   },
   name: {
     fontSize: 30,
     fontWeight: 'bold',
     marginBottom: 10,
     color: 'black',
+    textAlign: 'center'
   },
   text: {
     fontSize: 18,
     marginBottom: 10,
     color: 'black',
-    margin: 10
+    margin: 10,
+    textAlign: 'center'
   },
   map: { 
     height: height * 0.5,
-    width: 300,
+    width: 320,
     margin: 10,
+    alignSelf: 'center'
   },
   error: {
     color: 'red',
@@ -166,9 +212,14 @@ const styles = StyleSheet.create({
     gap: 15,
     padding: 20,
   },
+  weatherSubContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-evenly'
+  },
   weatherText: {
     fontSize: 16,
-    paddingLeft: 0,
-    color: '#2b55c7'
+    marginLeft: 10,
+    color: 'black'
   },
 })

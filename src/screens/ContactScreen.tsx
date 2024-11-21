@@ -131,6 +131,8 @@ export const ContactScreen =  ({ route, navigation }: Props) => {
         </TouchableOpacity>
         </View>
       </View>
+
+      </View>
         
     </ScrollView>
   )
@@ -179,22 +181,7 @@ const styles = StyleSheet.create({
     margin: 15,
     marginBottom: 25
   },
-  pictureContainer: {
-    shadowColor: 'rgba(0, 0, 0, 0.1)',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 12,
-    elevation: 5,
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    margin: 15,
-    marginBottom: 25
-  },
   picture: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
     width: 150,
     height: 150,
     borderRadius: 75,
@@ -204,19 +191,15 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 75,
     backgroundColor: 'white',
-    backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
-    textAlign: 'center',
     textAlign: 'center',
   },
   placeholderText: {
     fontSize: 100,
     fontWeight: 'bold',
+    textAlignVertical: 'center',
     color: 'green',
-    textAlignVertical: 'center'
-    color: 'green',
-    textAlignVertical: 'center'
   },
   name: {
     fontSize: 30,
@@ -224,23 +207,18 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: 'black',
     textAlign: 'center'
-    textAlign: 'center'
   },
   text: {
     fontSize: 18,
     marginBottom: 10,
     color: 'black',
     margin: 10,
-    textAlign: 'center'
-    margin: 10,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   map: { 
     height: height * 0.5,
     width: 320,
-    width: 320,
     margin: 10,
-    alignSelf: 'center'
     alignSelf: 'center'
   },
   error: {
@@ -259,16 +237,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-evenly'
   },
-  weatherSubContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-evenly'
-  },
   weatherText: {
     fontSize: 16,
     marginLeft: 10,
-    color: 'black'
-    marginLeft: 10,
-    color: 'black'
+    color: 'black',
   },
 })

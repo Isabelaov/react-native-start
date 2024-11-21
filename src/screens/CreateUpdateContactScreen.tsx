@@ -1,7 +1,6 @@
 import 'react-native-get-random-values';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions} from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
-import React, { useEffect, useRef, useState } from 'react'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { v4 as uuid } from 'uuid'
 import MapView, { MapPressEvent, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
@@ -13,7 +12,7 @@ import { useLocation } from '../hooks/useLocation';
 type Props = NativeStackScreenProps<RootStackParams, 'ContactToHandle'>
 const { height } = Dimensions.get('window');
 
-export const CreateUpdateContactScreen: React.FC<Props> = ({ route, navigation }) => {
+export const CreateUpdateContactScreen = ({ route, navigation }: Props) => {
   const { createUpdate } = useContacts()
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
@@ -22,9 +21,7 @@ export const CreateUpdateContactScreen: React.FC<Props> = ({ route, navigation }
   const { setPicture, pickPicture, takePicture, picture } = usePicture()
   const { location, pickLocation } = useLocation()
   const hasRunOnce = useRef(false)
-  const { setPicture, pickPicture, takePicture, picture } = usePicture()
-  const { location, pickLocation } = useLocation()
-  const hasRunOnce = useRef(false)
+  
 
   useEffect(() => {
     if(route.params?.id && !hasRunOnce.current) {
@@ -86,9 +83,6 @@ export const CreateUpdateContactScreen: React.FC<Props> = ({ route, navigation }
         value={ name }
         onChangeText={ setName }
         style={ styles.textInput }
-        value={ name }
-        onChangeText={ setName }
-        style={ styles.textInput }
         />
 
         <Text style={ styles.text }>Phone Number</Text>
@@ -96,16 +90,10 @@ export const CreateUpdateContactScreen: React.FC<Props> = ({ route, navigation }
         value={ phone }
         onChangeText={ setPhone }
         style={ styles.textInput }
-        value={ phone }
-        onChangeText={ setPhone }
-        style={ styles.textInput }
         />
 
         <Text style={ styles.text }>Email</Text>
         <TextInput 
-        value={ email }
-        onChangeText={ setEmail }
-        style={ styles.textInput }
         value={ email }
         onChangeText={ setEmail }
         style={ styles.textInput }
@@ -213,4 +201,4 @@ const styles = StyleSheet.create({
     margin: 10,
     
   },
-})
+})}

@@ -89,8 +89,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
   },
   picture: {
-    width: 50,
-    height: 50,
+    width: 70,
+    height: 70,
     borderRadius: 25,
     marginRight: 10
   },

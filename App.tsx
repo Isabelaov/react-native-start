@@ -7,42 +7,16 @@
 
 import { NavigationContainer } from '@react-navigation/native';
 import React from 'react';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {ContactListScreen} from './src/screens/ContactListScreen';
-import {CreateUpdateContactScreen} from './src/screens/CreateUpdateContactScreen';
-import { RootStackParams } from './src/interfaces';
-import { ContactScreen } from './src/screens/ContactScreen';
-import { SearchButton } from './src/components/SearchButton';
-
-const Stack = createNativeStackNavigator<RootStackParams>()
+import { useNavigatorStacks } from './src/hooks/useNavigatorStacks';
 
 function App(): React.JSX.Element {
+  const {isAuthenticated, UnauthenticatedStack, AuthenticatedStack} = useNavigatorStacks()
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='ContactList'>
-        <Stack.Screen 
-        name='ContactList' 
-        component={ ContactListScreen } 
-        options={ { 
-          title: 'Contact List', 
-          headerTitleAlign: 'center',
-          headerRight: () => <SearchButton/>
-        } }
-        />
-
-        <Stack.Screen
-          name="ContactToHandle"
-          component={ CreateUpdateContactScreen }
-          options={ { title: 'Create or Edit Contact' } }
-        />
-
-        <Stack.Screen 
-        name="ContactView"
-        component={ ContactScreen }
-        options={ { title: 'Contact Details' } }
-        />
-        
-      </Stack.Navigator>
+      {
+        isAuthenticated ? 
+        <AuthenticatedStack/> : <UnauthenticatedStack/>
+      }
     </NavigationContainer>
   );
 }

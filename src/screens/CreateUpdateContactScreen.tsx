@@ -1,6 +1,6 @@
 import 'react-native-get-random-values';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions} from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { v4 as uuid } from 'uuid'
 import MapView, { MapPressEvent, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
@@ -12,53 +12,46 @@ import { useLocation } from '../hooks/useLocation';
 type Props = NativeStackScreenProps<RootStackParams, 'ContactToHandle'>
 const { height } = Dimensions.get('window');
 
-// console.log({GOOGLE_MAPS_API_KEY});
-// console.log({WEATHER_API_KEY})
-
 export const CreateUpdateContactScreen: React.FC<Props> = ({ route, navigation }) => {
   const { createUpdate } = useContacts()
-    const [name, setName] = useState('')
-    const [phone, setPhone] = useState('')
-    const [email, setEmail] = useState('')
-    const [tag, setTag] = useState<string | undefined>(undefined)
+  const [name, setName] = useState('')
+  const [phone, setPhone] = useState('')
+  const [email, setEmail] = useState('')
 
-    const { setPicture, pickPicture, takePicture, picture } = usePicture()
-    const { location, pickLocation } = useLocation()
+  const { setPicture, pickPicture, takePicture, picture } = usePicture()
+  const { location, pickLocation } = useLocation()
+  const hasRunOnce = useRef(false)
 
-    useEffect(() => {
-        if(route.params?.id) {
-            const contact = route.params.contact
-
-            if (contact) {
-                setName(contact.name);
-                setPhone(contact.phone);
-                setEmail(contact.email || '');
-                setPicture(contact.picture || undefined)
-                setTag(contact.tag || 'client')
-
-                if(contact.location) {
-                  pickLocation(contact.location.latitude, contact.location.longitude)
-                }
-            }
-        }
-    }, [route.params, pickLocation, setTag, setPicture])
-
-    const save = async () => {
-      if (!name || (!phone && !email)) return;
-
-      const contact = {
-          id: route.params?.id || uuid(),
-          name,
-          phone,
-          email,
-          tag,
-          location: location ?? undefined
-      };
+  useEffect(() => {
+    if(route.params?.id && !hasRunOnce.current) {
+      const contact = route.params.contact
       
-      await createUpdate(contact)
-  
-      navigation.navigate('ContactList', { contact });
-    }    
+      if (contact) {
+        setName(contact.name);
+        setPhone(contact.phone);
+        setEmail(contact.email || '');
+        setPicture(contact.picture || undefined)
+
+        hasRunOnce.current = true
+      }
+    }
+  }, [route.params?.id, route.params?.contact, setPicture])
+
+  const save = async () => {
+    if (!name || (!phone && !email)) return;
+
+    const contact = {
+        id: route.params?.id || uuid(),
+        name,
+        phone,
+        email,
+        picture,
+    };
+    
+    await createUpdate(contact)
+
+    navigation.navigate('ContactList', { contact })
+  }    
 
   return (
     <ScrollView>
@@ -80,37 +73,27 @@ export const CreateUpdateContactScreen: React.FC<Props> = ({ route, navigation }
         </TouchableOpacity>
       </View>
 
-      <View style={ styles.containerButtons }>
-        <TouchableOpacity style={ styles.button } onPress={ () => setTag('client') }>
-          <Text style={ styles.buttonText }>Client</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={ styles.button } onPress={ () => setTag('employee') }>
-          <Text style={ styles.buttonText }>Employee</Text>
-        </TouchableOpacity>
-        </View>
-
       <View style={ styles.container }>
           
         <Text style={ styles.text }>Name</Text>
         <TextInput 
-        value={name}
-        onChangeText={setName}
-        style={styles.textInput}
+        value={ name }
+        onChangeText={ setName }
+        style={ styles.textInput }
         />
 
         <Text style={ styles.text }>Phone Number</Text>
         <TextInput 
-        value={phone}
-        onChangeText={setPhone}
-        style={styles.textInput}
+        value={ phone }
+        onChangeText={ setPhone }
+        style={ styles.textInput }
         />
 
         <Text style={ styles.text }>Email</Text>
         <TextInput 
-        value={email}
-        onChangeText={setEmail}
-        style={styles.textInput}
+        value={ email }
+        onChangeText={ setEmail }
+        style={ styles.textInput }
         />
 
         <MapView
@@ -124,7 +107,6 @@ export const CreateUpdateContactScreen: React.FC<Props> = ({ route, navigation }
                 longitudeDelta: 0.01
               }
             }
-            onMapReady={ ()=> console.log('uwu')}
             onPress={
               (e: MapPressEvent) => {
                 const { latitude, longitude } = e.nativeEvent.coordinate;

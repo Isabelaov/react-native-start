@@ -2,34 +2,20 @@ import { useEffect, useState } from 'react'
 import { Contact } from '../interfaces'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Alert } from 'react-native'
-
+import { useAuth } from '.'
+import axios from 'axios'
+import {BACKEND_URL} from '@env'
 const STORAGE_KEY = '@contacts'
 
-const defaultContacts = [
-  {
-    id: '0',
-    name: 'test 0',
-    phone: '123456',
-    email: 'uwu'
-  },
-  {
-    id: '1',
-    name: 'test 1',
-    phone: '123456',
-    email: 'uwu'
-  }
-]
-
-export default function useContacts(route?: any) {
+export default function useContacts() {
     const [contacts, setContacts] = useState<Contact[]>([])
 
-    const load = async ()=>{
+    const load = async () => {
         try {
-          const storedContacts = await AsyncStorage.getItem(STORAGE_KEY);
+          const token = await  useAuth().getAuthToken()
+          const res = await axios.get(`${BACKEND_URL}/contacts`, {headers: { Authorization: `Bearer ${token}` }})
 
-          if(storedContacts) {
-            setContacts(JSON.parse(storedContacts))
-          } 
+          setContacts(res.data)
         } catch (error) {
           console.error('Load contacts error:', error)
         }
@@ -79,17 +65,11 @@ export default function useContacts(route?: any) {
         )
       }
 
-    useEffect(() => {
-        if(route?.params?.id) {
-            deleteContact(route.params.id)
-        }
+      useEffect(() => {
+        load();
+    }, [])
 
-        }, [route?.params?.id])
-
-        useEffect(() => {
-        setContacts(defaultContacts)
-            load();
-        }, [])
+        
 
     return {
     contacts,

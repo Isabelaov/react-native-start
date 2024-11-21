@@ -4,8 +4,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import MapView, { Marker } from 'react-native-maps';
 import AntDesignIcon from "react-native-vector-icons/AntDesign";
 import EntypoIcon from 'react-native-vector-icons/Entypo';
-import FontAwesome6 from 'react-native-vector-icons/FontAwesome6'
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5'
+import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
 import { RootStackParams } from '../interfaces';
 import { useWeather } from '../hooks/useWeather';
 import useContacts from '../hooks/useContacts';
@@ -22,6 +21,7 @@ export const ContactScreen =  ({ route, navigation }: Props) => {
     <ScrollView>
       <View style={ styles.container }>
         <View style={ styles.pictureContainer }>
+        <View style={ styles.pictureContainer }>
             { contact.picture ? (
                 <Image source={ { uri: contact.picture } } style={ styles.picture } />
               ) : (
@@ -33,7 +33,25 @@ export const ContactScreen =  ({ route, navigation }: Props) => {
         </View>
 
         <View>
+        <View>
           <Text style={styles.name}>{ contact.name }</Text>
+
+          <View style={ styles.buttonsContainer }>
+            <AntDesignIcon name='phone' size={ 25 } color='#38bb54'/>
+            <Text style={styles.text}>{ contact.phone }</Text>
+          </View>
+
+          <View style={ styles.buttonsContainer }>
+            <AntDesignIcon name='mail' size={ 25 } color='#38bb54'/>
+            <Text style={styles.text}> { contact.email || 'no email' }</Text>
+          </View>
+
+          <View style={ styles.buttonsContainer }>
+            <AntDesignIcon name='tag' size={ 25 } color='#38bb54'/>
+            <Text style={ styles.text }>{ contact.tag || 'no tag' }</Text>
+          </View>
+          
+        </View>
 
           <View style={ styles.buttonsContainer }>
             <AntDesignIcon name='phone' size={ 25 } color='#38bb54'/>
@@ -67,17 +85,17 @@ export const ContactScreen =  ({ route, navigation }: Props) => {
                   <View style={styles.weatherContainer}>
                     <View style={ styles.weatherSubContainer }>
                       <EntypoIcon name='water' size={ 25 } color='#38bb54'/>
-                      <Text style={styles.weatherText}>{weather.main.humidity}%</Text>
+                      <Text style={ styles.weatherText }>{ weather.main.humidity }%</Text>
                     </View>
 
                     <View style={ styles.weatherSubContainer }>
-                      <FontAwesome6 name='temperature-half' size={ 25 } color='#38bb54'/>
-                      <Text style={styles.weatherText}>{weather.main.temp}°C</Text>
+                      <MaterialCommunityIcon name='temperature-celsius' size={ 25 } color='#38bb54'/>
+                      <Text style={ styles.weatherText }>{weather.main.temp}</Text>
                     </View>
 
                     <View style={ styles.weatherSubContainer }>
-                      <FontAwesome5 name='cloud' size={ 25 } color='#38bb54'/>
-                      <Text style={styles.weatherText}>{weather.weather[0].description}</Text>
+                      <MaterialCommunityIcon name='cloud' size={ 25 } color='#38bb54'/>
+                      <Text style={ styles.weatherText }>{ weather.weather[0].description }</Text>
                     </View>
                   </View>
                 ) : (
@@ -112,6 +130,8 @@ export const ContactScreen =  ({ route, navigation }: Props) => {
           <Text style={ styles.buttonText }>Delete</Text>
         </TouchableOpacity>
         </View>
+      </View>
+
       </View>
         
     </ScrollView>
@@ -178,8 +198,8 @@ const styles = StyleSheet.create({
   placeholderText: {
     fontSize: 100,
     fontWeight: 'bold',
+    textAlignVertical: 'center',
     color: 'green',
-    textAlignVertical: 'center'
   },
   name: {
     fontSize: 30,
@@ -193,7 +213,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: 'black',
     margin: 10,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   map: { 
     height: height * 0.5,
@@ -220,6 +240,6 @@ const styles = StyleSheet.create({
   weatherText: {
     fontSize: 16,
     marginLeft: 10,
-    color: 'black'
+    color: 'black',
   },
 })

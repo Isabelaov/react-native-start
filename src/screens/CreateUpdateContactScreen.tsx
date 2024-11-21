@@ -12,19 +12,16 @@ import { useLocation } from '../hooks/useLocation';
 type Props = NativeStackScreenProps<RootStackParams, 'ContactToHandle'>
 const { height } = Dimensions.get('window');
 
-// console.log({GOOGLE_MAPS_API_KEY});
-// console.log({WEATHER_API_KEY})
-
-export const CreateUpdateContactScreen: React.FC<Props> = ({ route, navigation }) => {
+export const CreateUpdateContactScreen = ({ route, navigation }: Props) => {
   const { createUpdate } = useContacts()
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
   const [email, setEmail] = useState('')
-  const [tag, setTag] = useState<string | undefined>(undefined)
 
   const { setPicture, pickPicture, takePicture, picture } = usePicture()
   const { location, pickLocation } = useLocation()
   const hasRunOnce = useRef(false)
+  
 
   useEffect(() => {
     if(route.params?.id && !hasRunOnce.current) {
@@ -35,17 +32,14 @@ export const CreateUpdateContactScreen: React.FC<Props> = ({ route, navigation }
         setPhone(contact.phone);
         setEmail(contact.email || '');
         setPicture(contact.picture || undefined)
-        setTag(contact.tag || 'client')
-
-        if(contact.location) {
-          pickLocation(contact.location.latitude, contact.location.longitude)
-        }
 
         hasRunOnce.current = true
       }
     }
-  }, [route.params?.id, route.params?.contact, pickLocation, setTag, setPicture])
+  }, [route.params?.id, route.params?.contact, setPicture])
 
+  const save = async () => {
+    if (!name || (!phone && !email)) return;
   const save = async () => {
     if (!name || (!phone && !email)) return;
 
@@ -54,9 +48,7 @@ export const CreateUpdateContactScreen: React.FC<Props> = ({ route, navigation }
         name,
         phone,
         email,
-        tag,
         picture,
-        location: location ?? undefined
     };
     
     await createUpdate(contact)
@@ -83,16 +75,6 @@ export const CreateUpdateContactScreen: React.FC<Props> = ({ route, navigation }
           <Text style={ styles.buttonText }>Take Photo</Text>
         </TouchableOpacity>
       </View>
-
-      <View style={ styles.containerButtons }>
-        <TouchableOpacity style={ styles.button } onPress={ () => setTag('client') }>
-          <Text style={ styles.buttonText }>Client</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={ styles.button } onPress={ () => setTag('employee') }>
-          <Text style={ styles.buttonText }>Employee</Text>
-        </TouchableOpacity>
-        </View>
 
       <View style={ styles.container }>
           
@@ -219,4 +201,4 @@ const styles = StyleSheet.create({
     margin: 10,
     
   },
-})
+})}

@@ -21,6 +21,7 @@ export const ContactScreen =  ({ route, navigation }: Props) => {
     <ScrollView>
       <View style={ styles.container }>
         <View style={ styles.pictureContainer }>
+        <View style={ styles.pictureContainer }>
             { contact.picture ? (
                 <Image source={ { uri: contact.picture } } style={ styles.picture } />
               ) : (
@@ -32,7 +33,25 @@ export const ContactScreen =  ({ route, navigation }: Props) => {
         </View>
 
         <View>
+        <View>
           <Text style={styles.name}>{ contact.name }</Text>
+
+          <View style={ styles.buttonsContainer }>
+            <AntDesignIcon name='phone' size={ 25 } color='#38bb54'/>
+            <Text style={styles.text}>{ contact.phone }</Text>
+          </View>
+
+          <View style={ styles.buttonsContainer }>
+            <AntDesignIcon name='mail' size={ 25 } color='#38bb54'/>
+            <Text style={styles.text}> { contact.email || 'no email' }</Text>
+          </View>
+
+          <View style={ styles.buttonsContainer }>
+            <AntDesignIcon name='tag' size={ 25 } color='#38bb54'/>
+            <Text style={ styles.text }>{ contact.tag || 'no tag' }</Text>
+          </View>
+          
+        </View>
 
           <View style={ styles.buttonsContainer }>
             <AntDesignIcon name='phone' size={ 25 } color='#38bb54'/>
@@ -160,7 +179,22 @@ const styles = StyleSheet.create({
     margin: 15,
     marginBottom: 25
   },
+  pictureContainer: {
+    shadowColor: 'rgba(0, 0, 0, 0.1)',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 12,
+    elevation: 5,
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    margin: 15,
+    marginBottom: 25
+  },
   picture: {
+    width: 150,
+    height: 150,
+    borderRadius: 75,
     width: 150,
     height: 150,
     borderRadius: 75,
@@ -170,13 +204,17 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 75,
     backgroundColor: 'white',
+    backgroundColor: 'white',
     justifyContent: 'center',
     alignItems: 'center',
+    textAlign: 'center',
     textAlign: 'center',
   },
   placeholderText: {
     fontSize: 100,
     fontWeight: 'bold',
+    color: 'green',
+    textAlignVertical: 'center'
     color: 'green',
     textAlignVertical: 'center'
   },
@@ -186,6 +224,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     color: 'black',
     textAlign: 'center'
+    textAlign: 'center'
   },
   text: {
     fontSize: 18,
@@ -193,11 +232,15 @@ const styles = StyleSheet.create({
     color: 'black',
     margin: 10,
     textAlign: 'center'
+    margin: 10,
+    textAlign: 'center'
   },
   map: { 
     height: height * 0.5,
     width: 320,
+    width: 320,
     margin: 10,
+    alignSelf: 'center'
     alignSelf: 'center'
   },
   error: {
@@ -216,8 +259,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-evenly'
   },
+  weatherSubContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-evenly'
+  },
   weatherText: {
     fontSize: 16,
+    marginLeft: 10,
+    color: 'black'
     marginLeft: 10,
     color: 'black'
   },

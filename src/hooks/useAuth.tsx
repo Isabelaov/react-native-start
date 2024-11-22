@@ -1,14 +1,14 @@
 import axios from 'axios';
 import { User } from '../interfaces/user';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { BACKEND_URL } from '@env';
 import { Alert } from 'react-native';
+import { apiService } from '../services/api';
 
 export const useAuth = () => {
   const register = async ({ ...user }: User) => {
     try {
       const { email, name, password } = user;
-      await axios.post(`${BACKEND_URL}/auth/register`, {
+      await axios.post<User>(`auth/register`, {
         email,
         user,
         name,
@@ -21,18 +21,17 @@ export const useAuth = () => {
 
   const login = async (email: string, password: string) => {
     try {
-      const res = await axios.post(`${BACKEND_URL}/auth/login`, {
+      const res = await apiService.post<{ accessToken: string }>(`auth/login`, {
         email,
         password,
       });
 
-      const token = res.data.accessToken;      
+      const token = res.accessToken;
 
       await AsyncStorage.setItem('AuthToken', token);
     } catch (error: any) {
       Alert.alert('Error in login:', String(error));
       console.log(error);
-      
     }
   };
 

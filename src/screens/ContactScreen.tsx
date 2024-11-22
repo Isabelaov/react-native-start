@@ -1,10 +1,19 @@
-import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions, ScrollView, ActivityIndicator } from 'react-native'
-import React from 'react'
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  Dimensions,
+  ScrollView,
+  ActivityIndicator,
+} from 'react-native';
+import React from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import MapView, { Marker } from 'react-native-maps';
-import AntDesignIcon from "react-native-vector-icons/AntDesign";
+import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import EntypoIcon from 'react-native-vector-icons/Entypo';
-import MaterialCommunityIcon from "react-native-vector-icons/MaterialCommunityIcons";
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { RootStackParams } from '../interfaces';
 import { useWeather } from '../hooks/useWeather';
 import useContacts from '../hooks/useContacts';
@@ -12,63 +21,63 @@ import useContacts from '../hooks/useContacts';
 type Props = NativeStackScreenProps<RootStackParams, 'ContactView'>;
 const { height } = Dimensions.get('window');
 
-export const ContactScreen =  ({ route, navigation }: Props) => {
-    const { deleteContact } = useContacts()
-    const { contact } = route.params
-    let { weather, loading, error } = useWeather(contact.location?.latitude, contact.location?.longitude);
+export const ContactScreen = ({ route, navigation }: Props) => {
+  const { deleteContact } = useContacts();
+  const { contact } = route.params;
+  let { weather, loading, error } = useWeather(
+    contact.location?.latitude,
+    contact.location?.longitude,
+  );
 
   return (
     <ScrollView>
-      <View style={ styles.container }>
-        <View style={ styles.pictureContainer }>
-        <View style={ styles.pictureContainer }>
-            { contact.picture ? (
-                <Image source={ { uri: contact.picture } } style={ styles.picture } />
-              ) : (
-                <View style={ styles.placeholder }>
-                  <Text style={ styles.placeholderText }>{ contact.name[0] }</Text>
-                </View>
-              ) 
-            }
-        </View>
-
-        <View>
-        <View>
-          <Text style={styles.name}>{ contact.name }</Text>
-
-          <View style={ styles.buttonsContainer }>
-            <AntDesignIcon name='phone' size={ 25 } color='#38bb54'/>
-            <Text style={styles.text}>{ contact.phone }</Text>
+      <View style={styles.container}>
+        <View style={styles.pictureContainer}>
+          <View style={styles.pictureContainer}>
+            {contact.picture ? (
+              <Image source={{ uri: contact.picture }} style={styles.picture} />
+            ) : (
+              <View style={styles.placeholder}>
+                <Text style={styles.placeholderText}>{contact.name[0]}</Text>
+              </View>
+            )}
           </View>
 
-          <View style={ styles.buttonsContainer }>
-            <AntDesignIcon name='mail' size={ 25 } color='#38bb54'/>
-            <Text style={styles.text}> { contact.email || 'no email' }</Text>
-          </View>
+          <View>
+            <View>
+              <Text style={styles.name}>{contact.name}</Text>
 
-          <View style={ styles.buttonsContainer }>
-            <AntDesignIcon name='tag' size={ 25 } color='#38bb54'/>
-            <Text style={ styles.text }>{ contact.tag || 'no tag' }</Text>
-          </View>
-          
-        </View>
+              <View style={styles.buttonsContainer}>
+                <AntDesignIcon name="phone" size={25} color="#38bb54" />
+                <Text style={styles.text}>{contact.phone}</Text>
+              </View>
 
-          <View style={ styles.buttonsContainer }>
-            <AntDesignIcon name='phone' size={ 25 } color='#38bb54'/>
-            <Text style={styles.text}>{ contact.phone }</Text>
-          </View>
+              <View style={styles.buttonsContainer}>
+                <AntDesignIcon name="mail" size={25} color="#38bb54" />
+                <Text style={styles.text}> {contact.email || 'no email'}</Text>
+              </View>
 
-          <View style={ styles.buttonsContainer }>
-            <AntDesignIcon name='mail' size={ 25 } color='#38bb54'/>
-            <Text style={styles.text}> { contact.email || 'no email' }</Text>
-          </View>
+              <View style={styles.buttonsContainer}>
+                <AntDesignIcon name="tag" size={25} color="#38bb54" />
+                <Text style={styles.text}>{contact.tag || 'no tag'}</Text>
+              </View>
+            </View>
 
-          <View style={ styles.buttonsContainer }>
-            <AntDesignIcon name='tag' size={ 25 } color='#38bb54'/>
-            <Text style={ styles.text }>{ contact.tag || 'no tag' }</Text>
+            <View style={styles.buttonsContainer}>
+              <AntDesignIcon name="phone" size={25} color="#38bb54" />
+              <Text style={styles.text}>{contact.phone}</Text>
+            </View>
+
+            <View style={styles.buttonsContainer}>
+              <AntDesignIcon name="mail" size={25} color="#38bb54" />
+              <Text style={styles.text}> {contact.email || 'no email'}</Text>
+            </View>
+
+            <View style={styles.buttonsContainer}>
+              <AntDesignIcon name="tag" size={25} color="#38bb54" />
+              <Text style={styles.text}>{contact.tag || 'no tag'}</Text>
+            </View>
           </View>
-          
-        </View>
 
           {contact.location && (
             <View>
@@ -80,22 +89,35 @@ export const ContactScreen =  ({ route, navigation }: Props) => {
                   </View>
                 ) : error ? (
                   <Text style={styles.error}>{error}</Text>
-                ) : 
-                weather ? (
+                ) : weather ? (
                   <View style={styles.weatherContainer}>
-                    <View style={ styles.weatherSubContainer }>
-                      <EntypoIcon name='water' size={ 25 } color='#38bb54'/>
-                      <Text style={ styles.weatherText }>{ weather.main.humidity }%</Text>
+                    <View style={styles.weatherSubContainer}>
+                      <EntypoIcon name="water" size={25} color="#38bb54" />
+                      <Text style={styles.weatherText}>
+                        {weather.main.humidity}%
+                      </Text>
                     </View>
 
-                    <View style={ styles.weatherSubContainer }>
-                      <MaterialCommunityIcon name='temperature-celsius' size={ 25 } color='#38bb54'/>
-                      <Text style={ styles.weatherText }>{weather.main.temp}</Text>
+                    <View style={styles.weatherSubContainer}>
+                      <MaterialCommunityIcon
+                        name="temperature-celsius"
+                        size={25}
+                        color="#38bb54"
+                      />
+                      <Text style={styles.weatherText}>
+                        {weather.main.temp}
+                      </Text>
                     </View>
 
-                    <View style={ styles.weatherSubContainer }>
-                      <MaterialCommunityIcon name='cloud' size={ 25 } color='#38bb54'/>
-                      <Text style={ styles.weatherText }>{ weather.weather[0].description }</Text>
+                    <View style={styles.weatherSubContainer}>
+                      <MaterialCommunityIcon
+                        name="cloud"
+                        size={25}
+                        color="#38bb54"
+                      />
+                      <Text style={styles.weatherText}>
+                        {weather.weather[0].description}
+                      </Text>
                     </View>
                   </View>
                 ) : (
@@ -111,32 +133,37 @@ export const ContactScreen =  ({ route, navigation }: Props) => {
                   latitudeDelta: 0.01,
                   longitudeDelta: 0.01,
                 }}
-                liteMode
-              >
+                liteMode>
                 <Marker coordinate={contact.location} />
               </MapView>
             </View>
-          )
-        }
+          )}
 
-      <View style={ styles.buttonsContainer }>
-        <TouchableOpacity style={ styles.itemButton }>
-          <Text style={ styles.buttonText } 
-          onPress={ () => navigation.navigate('ContactToHandle', { id: contact.id, contact: contact }) }
-          >Edit</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity style={ styles.itemButton } onPress={ () => deleteContact(contact.id) }>
-          <Text style={ styles.buttonText }>Delete</Text>
-        </TouchableOpacity>
+          <View style={styles.buttonsContainer}>
+            <TouchableOpacity style={styles.itemButton}>
+              <Text
+                style={styles.buttonText}
+                onPress={() =>
+                  navigation.navigate('ContactToHandle', {
+                    id: contact.id,
+                    contact: contact,
+                  })
+                }>
+                Edit
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.itemButton}
+              onPress={() => deleteContact(contact.id || '')}>
+              <Text style={styles.buttonText}>Delete</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
-
-      </View>
-        
     </ScrollView>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -145,7 +172,7 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-    flexGrow: 1
+    flexGrow: 1,
   },
   itemButton: {
     borderRadius: 10,
@@ -154,20 +181,20 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     padding: 5,
     margin: 10,
-    width: 100
+    width: 100,
   },
   itemButtonText: {
     margin: 5,
-    fontSize: 5
+    fontSize: 5,
   },
   buttonsContainer: {
     display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   buttonText: {
     fontSize: 20,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   pictureContainer: {
     shadowColor: 'rgba(0, 0, 0, 0.1)',
@@ -179,7 +206,7 @@ const styles = StyleSheet.create({
     height: 150,
     borderRadius: 75,
     margin: 15,
-    marginBottom: 25
+    marginBottom: 25,
   },
   picture: {
     width: 150,
@@ -206,7 +233,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
     color: 'black',
-    textAlign: 'center'
+    textAlign: 'center',
   },
   text: {
     fontSize: 18,
@@ -215,11 +242,11 @@ const styles = StyleSheet.create({
     margin: 10,
     textAlign: 'center',
   },
-  map: { 
+  map: {
     height: height * 0.5,
     width: 320,
     margin: 10,
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   error: {
     color: 'red',
@@ -235,11 +262,11 @@ const styles = StyleSheet.create({
   weatherSubContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-evenly'
+    justifyContent: 'space-evenly',
   },
   weatherText: {
     fontSize: 16,
     marginLeft: 10,
     color: 'black',
   },
-})
+});

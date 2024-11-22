@@ -1,204 +1,132 @@
 import 'react-native-get-random-values';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, ScrollView, Dimensions} from 'react-native'
-import React, { useEffect, useRef, useState } from 'react'
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { v4 as uuid } from 'uuid'
-import MapView, { MapPressEvent, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import { RootStackParams } from '../interfaces'
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ScrollView,
+  Dimensions,
+} from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { v4 as uuid } from 'uuid';
+import MapView, {
+  MapPressEvent,
+  Marker,
+  PROVIDER_GOOGLE,
+} from 'react-native-maps';
+import { Contact, RootStackParams } from '../interfaces';
 import useContacts from '../hooks/useContacts';
 import usePicture from '../hooks/usePicture';
 import { useLocation } from '../hooks/useLocation';
+import { ContainersBySide, FormStyles } from '../assets/styles';
+import { Button, Input } from '../components';
 
-type Props = NativeStackScreenProps<RootStackParams, 'ContactToHandle'>
-const { height } = Dimensions.get('window');
+type Props = NativeStackScreenProps<RootStackParams, 'ContactToHandle'>;
 
 export const CreateUpdateContactScreen = ({ route, navigation }: Props) => {
-  const { createUpdate } = useContacts()
-  const [name, setName] = useState('')
-  const [phone, setPhone] = useState('')
-  const [email, setEmail] = useState('')
+  const { createUpdate } = useContacts();
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
 
-  const { setPicture, pickPicture, takePicture, picture } = usePicture()
-  const { location, pickLocation } = useLocation()
-  const hasRunOnce = useRef(false)
-  
+  const { setPicture, pickPicture, takePicture, picture } = usePicture();
+  const { location, pickLocation } = useLocation();
+  const hasRunOnce = useRef(false);
 
   useEffect(() => {
-    if(route.params?.id && !hasRunOnce.current) {
-      const contact = route.params.contact
-      
+    if (route.params?.id && !hasRunOnce.current) {
+      const contact = route.params.contact;
+
       if (contact) {
         setName(contact.name);
         setPhone(contact.phone);
         setEmail(contact.email || '');
-        setPicture(contact.picture || undefined)
+        setPicture(contact.picture || undefined);
 
-        hasRunOnce.current = true
+        hasRunOnce.current = true;
       }
     }
-  }, [route.params?.id, route.params?.contact, setPicture])
+  }, [route.params?.id, route.params?.contact, setPicture]);
 
   const save = async () => {
     if (!name || (!phone && !email)) return;
-  const save = async () => {
-    if (!name || (!phone && !email)) return;
 
-    const contact = {
-        id: route.params?.id || uuid(),
-        name,
-        phone,
-        email,
-        picture,
+    const contact: Contact = {
+      name,
+      phone,
+      email,
+      picture,
     };
-    
-    await createUpdate(contact)
 
-    navigation.navigate('ContactList', { contact })
-  }    
+    if (route.params?.id) {
+      contact.id = route.params?.id;
+    }
+
+    console.log({ contact });
+
+    await createUpdate(contact);
+
+    navigation.navigate('ContactList', { contact });
+  };
 
   return (
     <ScrollView>
-      <View style={ styles.container }>
-
-      <View style={ styles.pictureContainer }>
-      <TouchableOpacity onPress={ pickPicture }>
+      <View style={FormStyles.container}>
+        <View style={FormStyles.pictureContainer}>
           {picture ? (
-            <Image source={ { uri:  picture} } style={styles.profilePic} />
+            <Image source={{ uri: picture }} style={FormStyles.profilePic} />
           ) : (
-            <View style={ styles.placeholder }>
-              <Text style={ styles.defaultPic }>{ name ? name[0] : " " }</Text>
+            <View style={FormStyles.placeholder}>
+              <Text style={FormStyles.defaultPic}>{name ? name[0] : ' '}</Text>
             </View>
           )}
-        </TouchableOpacity>
+        </View>
 
-        <TouchableOpacity style={ styles.button } onPress={ takePicture }>
-          <Text style={ styles.buttonText }>Take Photo</Text>
-        </TouchableOpacity>
-      </View>
+        <View style={ContainersBySide.mainContainer}>
+          <Button
+            onPress={pickPicture}
+            buttonText={<Text style={FormStyles.buttonText}>Gallery</Text>}
+          />
 
-      <View style={ styles.container }>
-          
-        <Text style={ styles.text }>Name</Text>
-        <TextInput 
-        value={ name }
-        onChangeText={ setName }
-        style={ styles.textInput }
-        />
+          <Button
+            onPress={takePicture}
+            buttonText={<Text style={FormStyles.buttonText}>Take Photo</Text>}
+          />
+        </View>
 
-        <Text style={ styles.text }>Phone Number</Text>
-        <TextInput 
-        value={ phone }
-        onChangeText={ setPhone }
-        style={ styles.textInput }
-        />
+        <View>
+          <Input placeholder="Name" onChangeText={setName} />
 
-        <Text style={ styles.text }>Email</Text>
-        <TextInput 
-        value={ email }
-        onChangeText={ setEmail }
-        style={ styles.textInput }
-        />
+          <Input placeholder="Phone Number" onChangeText={setPhone} />
 
-        <MapView
-          style={ styles.map }
-            provider={ PROVIDER_GOOGLE }
-            initialRegion={
-              {
-                latitude: location?.latitude || 6.2442,
-                longitude: location?.longitude || -75.5812,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01
-              }
-            }
-            onPress={
-              (e: MapPressEvent) => {
-                const { latitude, longitude } = e.nativeEvent.coordinate;
-                pickLocation(latitude, longitude)
-              }
-            }
-          >
-            {location && <Marker coordinate={ location }/>}
-        </MapView>
+          <Input placeholder="Email" onChangeText={setEmail} />
+        </View>
 
-        <TouchableOpacity 
-        style={ styles.button }
-        onPress={save}
-        >
-          <Text style={ styles.buttonText }>Save Contact</Text>
-        </TouchableOpacity>
-      </View>
+        <View style={FormStyles.container}>
+          <MapView
+            style={FormStyles.map}
+            provider={PROVIDER_GOOGLE}
+            initialRegion={{
+              latitude: location?.latitude || 6.2442,
+              longitude: location?.longitude || -75.5812,
+              latitudeDelta: 0.01,
+              longitudeDelta: 0.01,
+            }}
+            onPress={(e: MapPressEvent) => {
+              const { latitude, longitude } = e.nativeEvent.coordinate;
+              pickLocation(latitude, longitude);
+            }}>
+            {location && <Marker coordinate={location} />}
+          </MapView>
+
+          <TouchableOpacity style={FormStyles.button} onPress={save}>
+            <Text style={FormStyles.buttonText}>Save Contact</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
-    
-    
-  )
-}
-
-const styles = StyleSheet.create({
-  container: {
-    margin: 20,
-    marginTop: 10,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    flexGrow: 1
-  },
-  textInput: {
-    borderColor: 'black',
-    borderWidth: 2,
-    height: 50,
-    width: 300,
-    borderRadius: 20,
-    color: 'black'
-  },
-  text: {
-    color: 'black',
-    margin: 10,
-    fontSize: 20
-  },
-  button: {
-    color: 'black',
-    backgroundColor: 'green',
-    padding: 5,
-    borderRadius: 10,
-    width: 150,
-    margin: 20
-  },
-  buttonText: {
-    fontSize: 20,
-    textAlign: 'center'
-  },
-  pictureContainer: {
-    alignItems: 'center',
-    margin: 10
-  },
-  profilePic: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    margin: 10
-  },
-  placeholder: { 
-    width: 100, 
-    height: 100, 
-    borderRadius: 50, 
-    backgroundColor: '#ccc', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    marginBottom: 20 
-  },
-  defaultPic: {
-    fontSize: 50,
-    color: 'black'
-  },
-  containerButtons: {
-    display: 'flex',
-    flexDirection: 'row'
-  },
-  map: { 
-    height: height * 0.5,
-    width: 300,
-    margin: 10,
-    
-  },
-})}
+  );
+};

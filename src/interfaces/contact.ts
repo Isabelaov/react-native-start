@@ -3,8 +3,8 @@ export interface Contact {
   name: string;
   phone: string;
   email?: string;
-  picture?: string;
-  tag?: string;
+  profilePicture?: string;
+  contactType?: string;
   latitude?: number;
   longitude?: number;
 }

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Contact } from '../interfaces';
+import { Contact, Picture } from '../interfaces';
 import { Alert } from 'react-native';
 import { apiService } from '../services/api';
+import axios from 'axios';
 
 export default function useContacts() {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -15,18 +16,42 @@ export default function useContacts() {
     }
   };
 
-  const createUpdate = async (contact: Contact) => {
-    if (contact.id) {
-      await apiService.patch<Contact>(`contacts/${contact.id}`, {
-        contact,
-      });
-    } else {
-      await apiService.post<Contact>('contacts', {
-        contact,
-      });
-    }
+  const createUpdate = async (contact: Contact, file?: Picture) => {
+    try {
+      console.log({ contact });
 
-    await load();
+      if (contact.id) {
+        await apiService.patch<Contact>(
+          `contacts/${contact.id}`,
+          {
+            contact,
+            file,
+          },
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          },
+        );
+      } else {
+        await apiService.post<Contact>(
+          'contacts',
+          {
+            contact,
+            file,
+          },
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          },
+        );
+      }
+
+      await load();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const deleteContact = (id: string) => {

@@ -3,8 +3,8 @@ import axios, {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from 'axios';
-import {BACKEND_URL} from '@env';
-import {useAuth} from '../hooks';
+import { BACKEND_URL } from '@env';
+import { useAuth } from '../hooks';
 
 class ApiService {
   private instance: AxiosInstance;
@@ -36,17 +36,27 @@ class ApiService {
   }
 
   async get<T>(url: string, params?: Record<string, any>): Promise<T> {
-    const response = await this.instance.get<T>(url, {params});
+    const response = await this.instance.get<T>(url, { params });
     return response.data;
   }
 
-  async post<T>(url: string, data?: Record<string, any>): Promise<T> {
-    const response = await this.instance.post<T>(url, data);
+  async post<T>(
+    url: string,
+    data?: Record<string, any>,
+    config?: Record<string, any>,
+  ): Promise<T> {
+    console.log({ url });
+
+    const response = await this.instance.post<T>(url, data, config);
     return response.data;
   }
 
-  async patch<T>(url: string, data?: Record<string, any>): Promise<T> {
-    const response = await this.instance.patch<T>(url, data);
+  async patch<T>(
+    url: string,
+    data?: Record<string, any>,
+    config?: Record<string, any>,
+  ): Promise<T> {
+    const response = await this.instance.patch<T>(url, data, config);
     return response.data;
   }
 

@@ -1,17 +1,7 @@
 import 'react-native-get-random-values';
-import {
-  View,
-  Text,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  Dimensions,
-} from 'react-native';
+import { View, Text, TouchableOpacity, Image, ScrollView } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { v4 as uuid } from 'uuid';
 import MapView, {
   MapPressEvent,
   Marker,
@@ -21,8 +11,8 @@ import { Contact, RootStackParams } from '../interfaces';
 import useContacts from '../hooks/useContacts';
 import usePicture from '../hooks/usePicture';
 import { useLocation } from '../hooks/useLocation';
-import { ContainersBySide, FormStyles } from '../assets/styles';
-import { Button, Input } from '../components';
+import { CheckBoxStyles, ContainersBySide, FormStyles } from '../assets/styles';
+import { Button, Input, MyCheckBox } from '../components';
 
 type Props = NativeStackScreenProps<RootStackParams, 'ContactToHandle'>;
 
@@ -31,9 +21,11 @@ export const CreateUpdateContactScreen = ({ route, navigation }: Props) => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
+  const [tag, setTag] = useState<string | null>('');
 
-  const { setPicture, pickPicture, takePicture, picture } = usePicture();
-  const { location, pickLocation } = useLocation();
+  const { pickPicture, takePicture, url, setUrl, picture } = usePicture();
+  const { latitude, longitude, pickLocation } = useLocation();
+
   const hasRunOnce = useRef(false);
 
   useEffect(() => {
@@ -44,12 +36,17 @@ export const CreateUpdateContactScreen = ({ route, navigation }: Props) => {
         setName(contact.name);
         setPhone(contact.phone);
         setEmail(contact.email || '');
-        setPicture(contact.picture || undefined);
+        setUrl(contact.profilePicture || null);
+        setTag(contact.contactType || null);
+
+        if (contact.latitude && contact.longitude) {
+          pickLocation(contact.latitude, contact.longitude);
+        }
 
         hasRunOnce.current = true;
       }
     }
-  }, [route.params?.id, route.params?.contact, setPicture]);
+  }, [route.params]);
 
   const save = async () => {
     if (!name || (!phone && !email)) return;
@@ -58,16 +55,15 @@ export const CreateUpdateContactScreen = ({ route, navigation }: Props) => {
       name,
       phone,
       email,
-      picture,
+      ...(route.params?.id && { id: route.params.id }),
+      ...(url && { profilePicture: url }),
+      ...(tag && { contactType: tag }),
+      ...(latitude && longitude && { latitude, longitude }),
     };
-
-    if (route.params?.id) {
-      contact.id = route.params?.id;
-    }
 
     console.log({ contact });
 
-    await createUpdate(contact);
+    await createUpdate(contact, picture || undefined);
 
     navigation.navigate('ContactList', { contact });
   };
@@ -76,8 +72,8 @@ export const CreateUpdateContactScreen = ({ route, navigation }: Props) => {
     <ScrollView>
       <View style={FormStyles.container}>
         <View style={FormStyles.pictureContainer}>
-          {picture ? (
-            <Image source={{ uri: picture }} style={FormStyles.profilePic} />
+          {url ? (
+            <Image source={{ uri: url }} style={FormStyles.profilePic} />
           ) : (
             <View style={FormStyles.placeholder}>
               <Text style={FormStyles.defaultPic}>{name ? name[0] : ' '}</Text>
@@ -105,13 +101,31 @@ export const CreateUpdateContactScreen = ({ route, navigation }: Props) => {
           <Input placeholder="Email" onChangeText={setEmail} />
         </View>
 
+        <View style={CheckBoxStyles.container}>
+          <Text style={CheckBoxStyles.title}>Tag</Text>
+
+          <View style={ContainersBySide.mainContainer}>
+            <MyCheckBox
+              selectedOption={tag}
+              setSelectedOption={setTag}
+              option="Client"
+            />
+
+            <MyCheckBox
+              selectedOption={tag}
+              setSelectedOption={setTag}
+              option="Employee"
+            />
+          </View>
+        </View>
+
         <View style={FormStyles.container}>
           <MapView
             style={FormStyles.map}
             provider={PROVIDER_GOOGLE}
             initialRegion={{
-              latitude: location?.latitude || 6.2442,
-              longitude: location?.longitude || -75.5812,
+              latitude: latitude || 6.2442,
+              longitude: longitude || -75.5812,
               latitudeDelta: 0.01,
               longitudeDelta: 0.01,
             }}
@@ -119,7 +133,9 @@ export const CreateUpdateContactScreen = ({ route, navigation }: Props) => {
               const { latitude, longitude } = e.nativeEvent.coordinate;
               pickLocation(latitude, longitude);
             }}>
-            {location && <Marker coordinate={location} />}
+            {latitude && longitude && (
+              <Marker coordinate={{ latitude, longitude }} />
+            )}
           </MapView>
 
           <TouchableOpacity style={FormStyles.button} onPress={save}>

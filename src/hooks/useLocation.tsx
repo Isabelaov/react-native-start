@@ -1,14 +1,13 @@
-import {useState} from 'react';
+import { useState } from 'react';
 
 export const useLocation = () => {
-  const [location, setLocation] = useState<{
-    latitude: number;
-    longitude: number;
-  } | null>(null);
+  const [latitude, setLatitude] = useState<number | null>(null);
+  const [longitude, setLongitude] = useState<number | null>(null);
 
   const pickLocation = (lat: number, long: number) => {
-    setLocation({latitude: lat, longitude: long});
+    setLatitude(lat);
+    setLongitude(long);
   };
 
-  return {location, pickLocation};
+  return { latitude, longitude, pickLocation };
 };

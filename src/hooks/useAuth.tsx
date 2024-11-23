@@ -8,7 +8,7 @@ export const useAuth = () => {
   const register = async ({ ...user }: User) => {
     try {
       const { email, name, password } = user;
-      await axios.post<User>(`auth/register`, {
+      await apiService.post<User>(`auth/register`, {
         email,
         user,
         name,

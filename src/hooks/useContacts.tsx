@@ -2,14 +2,13 @@ import { useEffect, useState } from 'react';
 import { Contact, Picture } from '../interfaces';
 import { Alert } from 'react-native';
 import { apiService } from '../services/api';
-import axios from 'axios';
 
 export default function useContacts() {
   const [contacts, setContacts] = useState<Contact[]>([]);
 
   const load = async () => {
     try {
-      const res = await apiService.get<Contact[]>('contacts', {});
+      const res = await apiService.get<Contact[]>('contacts');
       setContacts(res);
     } catch (error) {
       console.error('Load contacts error:', error);
@@ -18,34 +17,34 @@ export default function useContacts() {
 
   const createUpdate = async (contact: Contact, file?: Picture) => {
     try {
-      console.log({ contact });
+      const data: { [key: string]: any } = {
+        file,
+        ...contact,
+      };
+
+      const formData = new FormData();
+
+      Object.keys(data).forEach(key => {
+        const value = data[key];
+
+        if (value != undefined && key != 'id')
+          formData.append(key, data[key].toString());
+      });
 
       if (contact.id) {
-        await apiService.patch<Contact>(
-          `contacts/${contact.id}`,
-          {
-            contact,
-            file,
+        await apiService.patch<Contact>(`contacts/${contact.id}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
           },
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          },
-        );
+        });
       } else {
-        await apiService.post<Contact>(
-          'contacts',
-          {
-            contact,
-            file,
+        console.log({ contact });
+
+        await apiService.post<Contact>('contacts', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
           },
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          },
-        );
+        });
       }
 
       await load();

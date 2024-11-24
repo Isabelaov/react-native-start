@@ -38,11 +38,8 @@ export default function usePicture() {
   const takeUri = (result: ImagePickerResponse) => {
     if (result.assets && result.assets.length > 0) {
       const asset = result.assets[0];
-      console.log({ asset });
 
       if (asset.uri) {
-        console.log(asset.uri);
-
         setPicture({
           uri: asset.uri,
           fileName: asset.fileName,

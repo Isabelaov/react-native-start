@@ -8,11 +8,17 @@ import { ContactListScreen } from '../screens/ContactListScreen';
 import { CreateUpdateContactScreen } from '../screens/CreateUpdateContactScreen';
 import { ContactScreen } from '../screens/ContactScreen';
 import { LogOutButton } from '../components';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Loading } from '../components/Loading';
+import { OnboardingScreen } from '../screens/OnboardingScreen';
 
 export const useNavigatorStacks = () => {
   const Stack = createNativeStackNavigator<RootStackParams>();
   const { getAuthToken } = useAuth();
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   const validateToken = async () => {
     if (await getAuthToken()) setIsAuthenticated(true);
@@ -20,23 +26,21 @@ export const useNavigatorStacks = () => {
 
   useEffect(() => {
     validateToken();
+    const checkOnboarding = async () => {
+      try {
+        await AsyncStorage.getItem('onboardingSeen');
+        setShowOnboarding(true);
+      } catch (error) {
+        console.error('Error checking onboarding state:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkOnboarding();
   }, []);
 
   const screens = [
-    () => (
-      <Stack.Screen
-        name="LogIn"
-        component={LogInScreen}
-        options={{ headerShown: false }}
-      />
-    ),
-    () => (
-      <Stack.Screen
-        name="UserToHandle"
-        component={RegisterScreen}
-        options={{ headerShown: false }}
-      />
-    ),
     () => (
       <Stack.Screen
         name="ContactList"
@@ -72,7 +76,33 @@ export const useNavigatorStacks = () => {
   };
 
   const UnauthenticatedStack = () => (
-    <Stack.Navigator initialRouteName="LogIn">{loadScreens()}</Stack.Navigator>
+    <Stack.Navigator initialRouteName={showOnboarding ? 'Onboarding' : 'LogIn'}>
+      {loadScreens()}
+      <Stack.Screen
+        name="LogIn"
+        component={LogInScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="UserToHandle"
+        component={RegisterScreen}
+        options={{ headerShown: false }}
+      />
+      {showOnboarding && (
+        <Stack.Screen
+          name="Onboarding"
+          component={OnboardingScreen}
+          options={{
+            headerShown: false,
+          }}
+          listeners={{
+            focus: async () => {
+              await AsyncStorage.setItem('onboardingSeen', 'true');
+            },
+          }}
+        />
+      )}
+    </Stack.Navigator>
   );
 
   const AuthenticatedStack = () => (
@@ -81,5 +111,11 @@ export const useNavigatorStacks = () => {
     </Stack.Navigator>
   );
 
-  return { isAuthenticated, UnauthenticatedStack, AuthenticatedStack };
+  console.log({ isAuthenticated });
+
+  return {
+    isAuthenticated,
+    UnauthenticatedStack: isLoading ? () => <Loading /> : UnauthenticatedStack,
+    AuthenticatedStack: isLoading ? () => <Loading /> : AuthenticatedStack,
+  };
 };

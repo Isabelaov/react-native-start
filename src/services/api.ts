@@ -12,7 +12,7 @@ class ApiService {
   constructor() {
     this.instance = axios.create({
       baseURL: BACKEND_URL,
-      timeout: 5000,
+      timeout: 10000,
     });
 
     this.instance.interceptors.request.use(
@@ -30,6 +30,12 @@ class ApiService {
       (response: AxiosResponse) => response,
       error => {
         console.error('API Error:', error.response || error.message);
+        console.error({
+          error,
+          message: error.message,
+          stack: error.stack,
+          url: this.instance.defaults.baseURL,
+        });
         return Promise.reject(error);
       },
     );
@@ -45,8 +51,6 @@ class ApiService {
     data?: Record<string, any>,
     config?: Record<string, any>,
   ): Promise<T> {
-    console.log({ url });
-
     const response = await this.instance.post<T>(url, data, config);
     return response.data;
   }

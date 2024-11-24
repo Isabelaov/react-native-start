@@ -17,6 +17,8 @@ import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIc
 import { RootStackParams } from '../interfaces';
 import { useWeather } from '../hooks/useWeather';
 import useContacts from '../hooks/useContacts';
+import { ContainersBySide, FormStyles, Texts } from '../assets/styles';
+import { baseColors } from '../assets/colors/baseColors';
 
 type Props = NativeStackScreenProps<RootStackParams, 'ContactView'>;
 const { height } = Dimensions.get('window');
@@ -25,140 +27,137 @@ export const ContactScreen = ({ route, navigation }: Props) => {
   const { deleteContact } = useContacts();
   const { contact } = route.params;
   let { weather, loading, error } = useWeather(
-    contact.location?.latitude,
-    contact.location?.longitude,
+    contact.latitude,
+    contact.longitude,
   );
 
   return (
     <ScrollView>
       <View style={styles.container}>
         <View style={styles.pictureContainer}>
-          <View style={styles.pictureContainer}>
-            {contact.picture ? (
-              <Image source={{ uri: contact.picture }} style={styles.picture} />
-            ) : (
-              <View style={styles.placeholder}>
-                <Text style={styles.placeholderText}>{contact.name[0]}</Text>
-              </View>
-            )}
-          </View>
-
-          <View>
-            <View>
-              <Text style={styles.name}>{contact.name}</Text>
-
-              <View style={styles.buttonsContainer}>
-                <AntDesignIcon name="phone" size={25} color="#38bb54" />
-                <Text style={styles.text}>{contact.phone}</Text>
-              </View>
-
-              <View style={styles.buttonsContainer}>
-                <AntDesignIcon name="mail" size={25} color="#38bb54" />
-                <Text style={styles.text}> {contact.email || 'no email'}</Text>
-              </View>
-
-              <View style={styles.buttonsContainer}>
-                <AntDesignIcon name="tag" size={25} color="#38bb54" />
-                <Text style={styles.text}>{contact.tag || 'no tag'}</Text>
-              </View>
+          {contact.profilePicture ? (
+            <Image
+              source={{ uri: contact.profilePicture }}
+              style={styles.picture}
+            />
+          ) : (
+            <View style={styles.placeholder}>
+              <Text style={styles.placeholderText}>{contact.name[0]}</Text>
             </View>
+          )}
+        </View>
 
-            <View style={styles.buttonsContainer}>
-              <AntDesignIcon name="phone" size={25} color="#38bb54" />
+        <View>
+          <View>
+            <Text style={styles.name}>{contact.name}</Text>
+
+            <View style={ContainersBySide.mainContainer}>
+              <AntDesignIcon
+                name="phone"
+                size={25}
+                color={baseColors.primary}
+              />
               <Text style={styles.text}>{contact.phone}</Text>
             </View>
 
-            <View style={styles.buttonsContainer}>
-              <AntDesignIcon name="mail" size={25} color="#38bb54" />
+            <View style={ContainersBySide.mainContainer}>
+              <AntDesignIcon name="mail" size={25} color={baseColors.primary} />
               <Text style={styles.text}> {contact.email || 'no email'}</Text>
             </View>
 
-            <View style={styles.buttonsContainer}>
-              <AntDesignIcon name="tag" size={25} color="#38bb54" />
-              <Text style={styles.text}>{contact.tag || 'no tag'}</Text>
+            <View style={ContainersBySide.mainContainer}>
+              <AntDesignIcon name="tag" size={25} color={baseColors.primary} />
+              <Text style={styles.text}>{contact.contactType || 'No tag'}</Text>
             </View>
           </View>
+        </View>
 
-          {contact.location && (
+        {contact.latitude && contact.longitude && (
+          <View>
             <View>
-              <View>
-                {loading ? (
-                  <View>
-                    <ActivityIndicator size="large" color="#0000ff" />
-                    <Text>Loading weather...</Text>
+              {loading ? (
+                <View>
+                  <ActivityIndicator size="large" color="#0000ff" />
+                  <Text>Loading weather...</Text>
+                </View>
+              ) : error ? (
+                <Text style={styles.error}>{error}</Text>
+              ) : weather ? (
+                <View style={styles.weatherContainer}>
+                  <View style={styles.weatherSubContainer}>
+                    <EntypoIcon
+                      name="water"
+                      size={25}
+                      color={baseColors.secondary}
+                    />
+                    <Text style={styles.weatherText}>
+                      {weather.main.humidity}%
+                    </Text>
                   </View>
-                ) : error ? (
-                  <Text style={styles.error}>{error}</Text>
-                ) : weather ? (
-                  <View style={styles.weatherContainer}>
-                    <View style={styles.weatherSubContainer}>
-                      <EntypoIcon name="water" size={25} color="#38bb54" />
-                      <Text style={styles.weatherText}>
-                        {weather.main.humidity}%
-                      </Text>
-                    </View>
 
-                    <View style={styles.weatherSubContainer}>
-                      <MaterialCommunityIcon
-                        name="temperature-celsius"
-                        size={25}
-                        color="#38bb54"
-                      />
-                      <Text style={styles.weatherText}>
-                        {weather.main.temp}
-                      </Text>
-                    </View>
-
-                    <View style={styles.weatherSubContainer}>
-                      <MaterialCommunityIcon
-                        name="cloud"
-                        size={25}
-                        color="#38bb54"
-                      />
-                      <Text style={styles.weatherText}>
-                        {weather.weather[0].description}
-                      </Text>
-                    </View>
+                  <View style={styles.weatherSubContainer}>
+                    <MaterialCommunityIcon
+                      name="temperature-celsius"
+                      size={25}
+                      color={baseColors.secondary}
+                    />
+                    <Text style={styles.weatherText}>{weather.main.temp}</Text>
                   </View>
-                ) : (
-                  <Text>No weather data available.</Text>
-                )}
-              </View>
 
-              <MapView
-                style={styles.map}
-                initialRegion={{
-                  latitude: contact.location.latitude,
-                  longitude: contact.location.longitude,
-                  latitudeDelta: 0.01,
-                  longitudeDelta: 0.01,
-                }}
-                liteMode>
-                <Marker coordinate={contact.location} />
-              </MapView>
+                  <View style={styles.weatherSubContainer}>
+                    <MaterialCommunityIcon
+                      name="cloud"
+                      size={25}
+                      color={baseColors.secondary}
+                    />
+                    <Text style={styles.weatherText}>
+                      {weather.weather[0].description}
+                    </Text>
+                  </View>
+                </View>
+              ) : (
+                <Text>No weather data available.</Text>
+              )}
             </View>
-          )}
 
-          <View style={styles.buttonsContainer}>
-            <TouchableOpacity style={styles.itemButton}>
-              <Text
-                style={styles.buttonText}
-                onPress={() =>
-                  navigation.navigate('ContactToHandle', {
-                    id: contact.id,
-                    contact: contact,
-                  })
-                }>
-                Edit
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.itemButton}
-              onPress={() => deleteContact(contact.id || '')}>
-              <Text style={styles.buttonText}>Delete</Text>
-            </TouchableOpacity>
+            <MapView
+              style={styles.map}
+              initialRegion={{
+                latitude: contact.latitude,
+                longitude: contact.longitude,
+                latitudeDelta: 0.01,
+                longitudeDelta: 0.01,
+              }}
+              liteMode>
+              <Marker
+                coordinate={{
+                  latitude: contact.latitude,
+                  longitude: contact.longitude,
+                }}
+              />
+            </MapView>
           </View>
+        )}
+
+        <View style={ContainersBySide.mainContainer}>
+          <TouchableOpacity style={FormStyles.button}>
+            <Text
+              style={styles.buttonText}
+              onPress={() =>
+                navigation.navigate('ContactToHandle', {
+                  id: contact.id,
+                  contact: contact,
+                })
+              }>
+              Edit
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={FormStyles.button}
+            onPress={() => deleteContact(contact.id || '')}>
+            <Text style={styles.buttonText}>Delete</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>
@@ -186,11 +185,6 @@ const styles = StyleSheet.create({
   itemButtonText: {
     margin: 5,
     fontSize: 5,
-  },
-  buttonsContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
   },
   buttonText: {
     fontSize: 20,

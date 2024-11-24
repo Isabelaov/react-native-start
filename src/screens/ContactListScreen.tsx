@@ -31,8 +31,8 @@ export const ContactListScreen = () => {
       style={List.item}
       onPress={() => navigation.navigate('ContactView', { contact: item })}>
       <View>
-        {item.picture ? (
-          <Image source={{ uri: item.picture }} style={List.picture} />
+        {item.profilePicture ? (
+          <Image source={{ uri: item.profilePicture }} style={List.picture} />
         ) : (
           <View style={List.placeholder}>
             <Text style={List.placeholderText}>{item.name[0]}</Text>
@@ -46,7 +46,9 @@ export const ContactListScreen = () => {
         <Text style={Texts.text}>{item.email || 'no email :3'}</Text>
 
         <View style={List.tag}>
-          <Text style={List.tagText}>{item.tag ? item.tag : 'no tag'}</Text>
+          <Text style={List.tagText}>
+            {item.contactType ? item.contactType : 'No tag'}
+          </Text>
         </View>
       </View>
 

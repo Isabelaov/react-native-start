@@ -10,13 +10,12 @@ import React from 'react';
 import { useNavigatorStacks } from './src/hooks/useNavigatorStacks';
 
 function App(): React.JSX.Element {
-  const {isAuthenticated, UnauthenticatedStack, AuthenticatedStack} = useNavigatorStacks()
+  const { isAuthenticated, UnauthenticatedStack, AuthenticatedStack } =
+    useNavigatorStacks();
+
   return (
     <NavigationContainer>
-      {
-        isAuthenticated ? 
-        <AuthenticatedStack/> : <UnauthenticatedStack/>
-      }
+      {isAuthenticated ? <AuthenticatedStack /> : <UnauthenticatedStack />}
     </NavigationContainer>
   );
 }
